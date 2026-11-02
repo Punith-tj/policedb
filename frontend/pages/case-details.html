@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Details — Police DBMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar"></nav>
+        <div class="main-content">
+            <header class="topbar" id="topbar"></header>
+            <main class="content">
+
+                <!-- Header Actions -->
+                <div class="page-header">
+                    <div>
+                        <a href="cases.html" class="btn btn-sm btn-secondary" style="margin-bottom: 8px;">← Back to Cases</a>
+                        <h2 id="headerFirNumber">Loading Case...</h2>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-info" onclick="openAssignOfficerModal()">👮 Assign Officer</button>
+                        <button class="btn btn-warning" id="closeCaseBtn" onclick="handleCloseCase()">🔒 Close Case</button>
+                    </div>
+                </div>
+
+                <!-- Case Primary Overview Cards -->
+                <div class="detail-grid" id="caseOverviewGrid">
+                    <div class="detail-card">
+                        <h4>Case Type</h4>
+                        <p id="detailCaseType">—</p>
+                    </div>
+                    <div class="detail-card">
+                        <h4>Registration Date</h4>
+                        <p id="detailDate">—</p>
+                    </div>
+                    <div class="detail-card">
+                        <h4>Status</h4>
+                        <p id="detailStatus">—</p>
+                    </div>
+                    <div class="detail-card">
+                        <h4>Incident Location</h4>
+                        <p id="detailLocation">—</p>
+                    </div>
+                    <div class="detail-card">
+                        <h4>Investigating Officer</h4>
+                        <p id="detailOfficer">—</p>
+                    </div>
+                    <div class="detail-card">
+                        <h4>Registering Station</h4>
+                        <p id="detailStation">—</p>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-body">
+                        <h4 style="font-size: 14px; color: var(--text-secondary); margin-bottom: 6px;">Case Description / Brief</h4>
+                        <p id="detailDescription" style="font-size: 15px; color: var(--text-primary);">—</p>
+                    </div>
+                </div>
+
+                <!-- Section: Linked Criminals (M:N) -->
+                <div class="detail-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3>Linked Criminals (M:N Relationship)</h3>
+                        <button class="btn btn-sm btn-primary" onclick="openLinkCriminalModal()">＋ Link Criminal</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Age</th>
+                                            <th>Gender</th>
+                                            <th>Address</th>
+                                            <th style="width: 100px;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="criminalsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Victims -->
+                <div class="detail-section">
+                    <h3>Victims</h3>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Age</th>
+                                            <th>Gender</th>
+                                            <th>Contact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="victimsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Witnesses -->
+                <div class="detail-section">
+                    <h3>Witnesses</h3>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Age</th>
+                                            <th>Contact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="witnessesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Evidence -->
+                <div class="detail-section">
+                    <h3>Collected Evidence</h3>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Type</th>
+                                            <th>Collection Date</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="evidenceTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Arrests -->
+                <div class="detail-section">
+                    <h3>Arrests Recorded</h3>
+                    <div class="card">
+                        <div class="card-body" style="padding: 0;">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Arrest Date</th>
+                                            <th>Location</th>
+                                            <th>Criminal Name</th>
+                                            <th>Arresting Officer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="arrestsTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Assign Officer Modal (Calls Stored Procedure) -->
+    <div class="modal-overlay" id="assignOfficerModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3>Assign Officer</h3>
+                <button class="modal-close" onclick="closeModal('assignOfficerModal')">×</button>
+            </div>
+            <form onsubmit="submitAssignOfficer(event)">
+                <div class="modal-body">
+                    <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">Calls stored procedure <code>sp_assign_officer_to_case</code>. Station assignment remains unchanged.</p>
+                    <div class="form-group">
+                        <label for="assignOfficerSelect">Select Officer *</label>
+                        <select id="assignOfficerSelect" class="form-control" required>
+                            <option value="">-- Choose Officer --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('assignOfficerModal')">Cancel</button>
+                    <button type="submit" class="btn btn-info" id="assignOfficerSubmitBtn">Assign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Link Criminal Modal (M:N Junction Table) -->
+    <div class="modal-overlay" id="linkCriminalModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3>Link Criminal to FIR</h3>
+                <button class="modal-close" onclick="closeModal('linkCriminalModal')">×</button>
+            </div>
+            <form onsubmit="submitLinkCriminal(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="criminalSelect">Select Criminal Profile *</label>
+                        <select id="criminalSelect" class="form-control" required>
+                            <option value="">-- Choose Criminal --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('linkCriminalModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="linkCriminalSubmitBtn">Link Criminal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/pages/case-details.js"></script>
+</body>
+</html>
+

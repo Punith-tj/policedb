@@ -1,0 +1,13 @@
+{
+  "name": "police-record-management-system",
+  "version": "1.0.0",
+  "description": "Police Record Management System — B.Tech ISE DBMS Mini Project",
+  "scripts": {
+    "migrate": "node migrate.js",
+    "serve": "node scratch/serve.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.11.0"
+  }
+}
+

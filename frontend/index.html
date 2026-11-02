@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Police Record Management System</title>
+</head>
+<body>
+  <p>Redirecting to Police Record Management System...</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script>
+    (async () => {
+      try {
+        if (!SUPABASE_URL || SUPABASE_URL === "YOUR_SUPABASE_URL") {
+          window.location.href = "login.html";
+          return;
+        }
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+          window.location.href = "pages/dashboard.html";
+        } else {
+          window.location.href = "login.html";
+        }
+      } catch (err) {
+        console.warn("Auth check fallback to login:", err);
+        window.location.href = "login.html";
+      }
+    })();
+  </script>
+</body>
+</html>

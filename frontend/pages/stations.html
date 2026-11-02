@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Stations — Police DBMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar"></nav>
+        <div class="main-content">
+            <header class="topbar" id="topbar"></header>
+            <main class="content">
+                <div class="page-header">
+                    <h2>Police Stations</h2>
+                    <button class="btn btn-primary" onclick="openAddModal()">＋ Add Station</button>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by name or location..." oninput="handleSearch()">
+                </div>
+
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Station Name</th>
+                                        <th>Location</th>
+                                        <th>Contact Number</th>
+                                        <th style="width: 140px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add/Edit Station Modal -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Station</h3>
+                <button class="modal-close" onclick="closeModal('formModal')">×</button>
+            </div>
+            <form id="stationForm" onsubmit="handleFormSubmit(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="stationName">Station Name *</label>
+                        <input type="text" id="stationName" class="form-control" placeholder="e.g. Indiranagar Police Station" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" id="location" class="form-control" placeholder="e.g. Indiranagar, Bengaluru" required maxlength="255">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactNumber">Contact Number *</label>
+                        <input type="text" id="contactNumber" class="form-control" placeholder="e.g. 080-25210001" required maxlength="15">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('formModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Save Station</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this station? This action cannot be undone.</p>
+                <p style="font-size: 12px; color: var(--danger); margin-top: 8px;">Note: Deletion will be rejected if officers or cases are registered at this station.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/pages/stations.js"></script>
+</body>
+</html>
+

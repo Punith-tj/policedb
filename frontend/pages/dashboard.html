@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Police DBMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar"></nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <header class="topbar" id="topbar"></header>
+
+            <main class="content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                </div>
+
+                <!-- Stats Grid — 5 stat cards -->
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Total FIRs -->
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i>📋</i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total FIRs</span>
+                            <span class="stat-value" id="totalFirs">—</span>
+                        </div>
+                    </div>
+
+                    <!-- Pending FIRs -->
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">
+                            <i>⏳</i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Pending FIRs</span>
+                            <span class="stat-value" id="pendingFirs">—</span>
+                        </div>
+                    </div>
+
+                    <!-- Solved FIRs -->
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i>✅</i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Solved FIRs</span>
+                            <span class="stat-value" id="solvedFirs">—</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Officers -->
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i>👮</i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Officers</span>
+                            <span class="stat-value" id="totalOfficers">—</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Criminals -->
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i>🔒</i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Criminals</span>
+                            <span class="stat-value" id="totalCriminals">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid — 2 chart cards -->
+                <div class="charts-grid">
+                    <!-- Bar Chart: Cases Per Station -->
+                    <div class="chart-card">
+                        <h3>Cases Per Station</h3>
+                        <div class="chart-container">
+                            <canvas id="stationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Doughnut Chart: Cases By Status -->
+                    <div class="chart-card">
+                        <h3>Cases By Status</h3>
+                        <div class="chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/pages/dashboard.js"></script>
+</body>
+</html>

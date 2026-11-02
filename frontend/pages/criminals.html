@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criminal Records — Police DBMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar"></nav>
+        <div class="main-content">
+            <header class="topbar" id="topbar"></header>
+            <main class="content">
+                <div class="page-header">
+                    <h2>Criminal Records</h2>
+                    <button class="btn btn-primary" onclick="openAddModal()">＋ Add Criminal</button>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by name, address..." oninput="handleSearch()">
+                </div>
+
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Full Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Last Known Address</th>
+                                        <th style="width: 200px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add/Edit Criminal Modal -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Criminal Record</h3>
+                <button class="modal-close" onclick="closeModal('formModal')">×</button>
+            </div>
+            <form id="criminalForm" onsubmit="handleFormSubmit(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="criminalName">Full Name *</label>
+                        <input type="text" id="criminalName" class="form-control" placeholder="e.g. Ravi Shankar" required maxlength="100">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="age">Age * (Must be > 0)</label>
+                            <input type="number" id="age" class="form-control" min="1" max="120" placeholder="e.g. 28" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Gender *</label>
+                            <select id="gender" class="form-control" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address *</label>
+                        <input type="text" id="address" class="form-control" placeholder="e.g. 23, JC Nagar, Bengaluru" required maxlength="255">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('formModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- History / Dossier Modal -->
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="historyModalTitle">Criminal Dossier</h3>
+                <button class="modal-close" onclick="closeModal('historyModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="historyProfile" style="margin-bottom: 20px; padding: 12px; background: var(--bg-body); border-radius: 8px;"></div>
+                
+                <h4 style="margin-bottom: 8px;">Involved FIR Cases</h4>
+                <div class="table-responsive" style="margin-bottom: 20px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>FIR Number</th>
+                                <th>Case Type</th>
+                                <th>Reg. Date</th>
+                                <th>Status</th>
+                                <th>Station</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyCasesTableBody"></tbody>
+                    </table>
+                </div>
+
+                <h4 style="margin-bottom: 8px;">Arrest History</h4>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Arrest ID</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Under FIR</th>
+                                <th>Arresting Officer</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyArrestsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('historyModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this criminal record?</p>
+                <p style="font-size: 12px; color: var(--danger); margin-top: 8px;">RESTRICT constraint: deletion will fail if this criminal is linked to any active FIRs or arrests.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/pages/criminals.js"></script>
+</body>
+</html>
+

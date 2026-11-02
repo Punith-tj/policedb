@@ -1,0 +1,8 @@
+{
+  "git.ignoreLimitWarning": true,
+  "deno.enable": true,
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+  "deno.unstable": false
+}

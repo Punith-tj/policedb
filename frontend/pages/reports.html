@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics — Police DBMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar"></nav>
+        <div class="main-content">
+            <header class="topbar" id="topbar"></header>
+            <main class="content">
+                <div class="page-header">
+                    <h2>Reports & Analytics Views</h2>
+                </div>
+
+                <!-- Report 1: Station Case Summary (vw_station_case_summary) -->
+                <div class="report-section card" style="margin-bottom: 24px;">
+                    <div class="card-body">
+                        <div class="report-header">
+                            <div>
+                                <h3>1. Police Station Caseload Summary</h3>
+                                <p style="font-size: 13px; color: var(--text-secondary);">Powered by MySQL view: <code>vw_station_case_summary</code></p>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="exportStationSummary()">Export CSV</button>
+                                <button class="btn btn-sm btn-outline-light" onclick="printSection('stationSummaryReport', 'Station Summary')">Print</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive" id="stationSummaryReport">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Station ID</th>
+                                        <th>Station Name</th>
+                                        <th>Location</th>
+                                        <th>Total Cases</th>
+                                        <th>Pending</th>
+                                        <th>Under Investigation</th>
+                                        <th>Solved</th>
+                                        <th>Closed</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stationSummaryTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report 2: Officer Workload (vw_officer_case_load) -->
+                <div class="report-section card" style="margin-bottom: 24px;">
+                    <div class="card-body">
+                        <div class="report-header">
+                            <div>
+                                <h3>2. Investigating Officer Workload Breakdown</h3>
+                                <p style="font-size: 13px; color: var(--text-secondary);">Powered by MySQL view: <code>vw_officer_case_load</code></p>
+                            </div>
+                            <div class="report-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="exportOfficerWorkload()">Export CSV</button>
+                                <button class="btn btn-sm btn-outline-light" onclick="printSection('officerWorkloadReport', 'Officer Workload')">Print</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive" id="officerWorkloadReport">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Officer ID</th>
+                                        <th>Officer Name</th>
+                                        <th>Designation</th>
+                                        <th>Station</th>
+                                        <th>Status Category</th>
+                                        <th>Active Cases Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="officerWorkloadTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report 3: Pending vs Solved Cases -->
+                <div class="report-section card" style="margin-bottom: 24px;">
+                    <div class="card-body">
+                        <div class="report-header">
+                            <div>
+                                <h3>3. Pending vs Solved FIR Cases</h3>
+                                <p style="font-size: 13px; color: var(--text-secondary);">Powered by views: <code>vw_pending_cases</code> & <code>vw_solved_cases</code></p>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <select id="caseViewToggle" class="filter-select" onchange="toggleCaseView()">
+                                    <option value="pending">Pending Cases (vw_pending_cases)</option>
+                                    <option value="solved">Solved Cases (vw_solved_cases)</option>
+                                </select>
+                                <button class="btn btn-sm btn-secondary" onclick="exportCasesView()">Export CSV</button>
+                                <button class="btn btn-sm btn-outline-light" onclick="printSection('casesViewReport', 'FIR Cases View')">Print</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive" id="casesViewReport">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>FIR Number</th>
+                                        <th>Case Type</th>
+                                        <th>Reg. Date</th>
+                                        <th>Incident Location</th>
+                                        <th>Officer</th>
+                                        <th>Designation</th>
+                                        <th>Station</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="casesViewTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report 4: Individual Criminal History Lookup -->
+                <div class="report-section card">
+                    <div class="card-body">
+                        <div class="report-header">
+                            <div>
+                                <h3>4. Criminal Record Dossier Lookup</h3>
+                                <p style="font-size: 13px; color: var(--text-secondary);">Queries view <code>vw_criminal_full_record</code> joined with arrest records</p>
+                            </div>
+                        </div>
+                        <div class="lookup-form">
+                            <div class="form-group">
+                                <label for="criminalSelect">Select Criminal Profile</label>
+                                <select id="criminalSelect" class="form-control" style="min-width: 250px;">
+                                    <option value="">-- Choose Criminal --</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" onclick="lookupCriminalDossier()">Generate Dossier</button>
+                        </div>
+                        <div id="dossierResultArea"></div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/pages/reports.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIR Cases — Police DBMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar"></nav>
+        <div class="main-content">
+            <header class="topbar" id="topbar"></header>
+            <main class="content">
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>FIR Cases</h1>
+                    <button class="btn btn-primary" onclick="openAddModal()">＋ Register FIR</button>
+                </div>
+
+                <!-- Filters Bar -->
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search FIRs..." oninput="handleSearch()">
+                    <select class="filter-select" id="statusFilter" onchange="handleStatusFilter()">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Under Investigation">Under Investigation</option>
+                        <option value="Solved">Solved</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                    <select class="filter-select" id="stationFilter" onchange="handleStationFilter()">
+                        <option value="">All Stations</option>
+                    </select>
+                </div>
+
+                <!-- Cases Table -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>FIR Number</th>
+                                        <th>Case Type</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Officer</th>
+                                        <th>Station</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="casesTableBody">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="formModalTitle">Register New FIR</h3>
+                <button class="modal-close" onclick="closeModal('formModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="caseForm" onsubmit="handleFormSubmit(event)">
+                    <!-- FIR Number: only visible on add -->
+                    <div class="form-group" id="firNumberGroup">
+                        <label for="fir_number">FIR Number *</label>
+                        <input type="text" class="form-control" id="fir_number" name="fir_number" required placeholder="e.g. FIR-2024-001">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="case_type">Case Type *</label>
+                            <input type="text" class="form-control" id="case_type" name="case_type" required placeholder="e.g. Theft, Assault">
+                        </div>
+                        <div class="form-group">
+                            <label for="registration_date">Registration Date *</label>
+                            <input type="date" class="form-control" id="registration_date" name="registration_date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" class="form-control" id="location" name="location" required placeholder="Incident location">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" placeholder="Case description..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="status">Status *</label>
+                            <select class="form-control" id="status" name="status" required>
+                                <option value="Pending">Pending</option>
+                                <option value="Under Investigation">Under Investigation</option>
+                                <option value="Solved">Solved</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="officer_id">Investigating Officer</label>
+                            <select class="form-control" id="officer_id" name="officer_id">
+                                <option value="">-- Select Officer --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="station_id">Station *</label>
+                        <select class="form-control" id="station_id" name="station_id" required>
+                            <option value="">-- Select Station --</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('formModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="formSubmitBtn">Register FIR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete FIR <strong id="deleteFirNumber"></strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/pages/cases.js"></script>
+</body>
+</html>

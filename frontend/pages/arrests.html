@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrests — Police DBMS</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="sidebar" id="sidebar"></nav>
+        <div class="main-content">
+            <header class="topbar" id="topbar"></header>
+            <main class="content">
+                <div class="page-header">
+                    <h2>Arrest Records</h2>
+                    <button class="btn btn-primary" onclick="openAddModal()">＋ Record Arrest</button>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by criminal, location, officer..." oninput="filterArrests()">
+                    <select id="firFilter" class="filter-select" onchange="filterArrests()">
+                        <option value="">All FIRs</option>
+                    </select>
+                </div>
+
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Arrest ID</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Criminal Name</th>
+                                        <th>FIR Number</th>
+                                        <th>Case Type</th>
+                                        <th>Arresting Officer</th>
+                                        <th style="width: 140px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Record/Edit Arrest Modal -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Record New Arrest</h3>
+                <button class="modal-close" onclick="closeModal('formModal')">×</button>
+            </div>
+            <form id="arrestForm" onsubmit="handleFormSubmit(event)">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="arrestDate">Arrest Date *</label>
+                            <input type="date" id="arrestDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firNumber">Under FIR *</label>
+                            <select id="firNumber" class="form-control" required>
+                                <option value="">Select FIR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="arrestLocation">Arrest Location *</label>
+                        <input type="text" id="arrestLocation" class="form-control" placeholder="e.g. Madiwala, Bengaluru" required maxlength="255">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="criminalId">Arrested Criminal *</label>
+                            <select id="criminalId" class="form-control" required>
+                                <option value="">Select Criminal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="officerId">Arresting Officer *</label>
+                            <select id="officerId" class="form-control" required>
+                                <option value="">Select Officer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary); background: var(--bg-body); padding: 8px; border-radius: 6px;">
+                        ⚡ <strong>Trigger active:</strong> Recording an arrest will automatically change a 'Pending' case to 'Under Investigation'. If the case is 'Closed', the database trigger will reject the arrest.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('formModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Record Arrest</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3>Confirm Deletion</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this arrest record?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/supabase-client.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/pages/arrests.js"></script>
+</body>
+</html>
+

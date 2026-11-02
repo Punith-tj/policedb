@@ -1,0 +1,7 @@
+# Supabase Project Configuration
+# Replace "your-project-ref" with your actual Supabase project reference ID
+# Found in: Supabase Dashboard -> Settings -> General -> Reference ID
+
+[project]
+id = "your-project-ref"
+
